@@ -14,15 +14,13 @@ HEADERS = {
 def count_time(func):
     import time
 
-    def wrapper():
+    def wrapper(*args, **kwargs):
         start = time.time()
-        func()
+        return_value = func(*args, **kwargs)
         end = time.time()
-        print('[*] Время выполнения: {} секунд.'.format(end - start))
-
+        print('[*] Время выполнения: {} секунд.'.format(end-start))
+        return return_value
     return wrapper
-
-
 
 def get_html(url, params=''):
     r = requests.get(url, headers=HEADERS, params=params)
@@ -61,13 +59,12 @@ def save_bd(goods, path):
         writer.writerow(['Артикул', 'Товар', 'Бренд', 'Цена со скидкой', 'Цена без скидки', 'Ссылка на товар'])
         for item in goods:
             writer.writerow( [item['id'], item['good'], item['brand'], item['sales price'], item['full price'], item['link']])
-
 @count_time
-def parser(PAGE: int):
+def parser(page: int):
         html = get_html(URL)
         if html.status_code == 200:
             goods = []
-            for page in range(1, PAGE):
+            for page in range(1, page):
                 print(f'Парсим страницу № {page}')
                 html = get_html(URL, params={'page': page})
                 goods.extend(get_conteent(html.text))
