@@ -11,6 +11,19 @@ HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36'
 }
 
+def count_time(func):
+    import time
+
+    def wrapper():
+        start = time.time()
+        func()
+        end = time.time()
+        print('[*] Время выполнения: {} секунд.'.format(end - start))
+
+    return wrapper
+
+
+
 def get_html(url, params=''):
     r = requests.get(url, headers=HEADERS, params=params)
     return r
@@ -49,7 +62,7 @@ def save_bd(goods, path):
         for item in goods:
             writer.writerow( [item['id'], item['good'], item['brand'], item['sales price'], item['full price'], item['link']])
 
-
+@count_time
 def parser(PAGE: int):
         html = get_html(URL)
         if html.status_code == 200:
@@ -65,4 +78,5 @@ def parser(PAGE: int):
 
 html = get_html(URL)
 parser(12)
+
 
